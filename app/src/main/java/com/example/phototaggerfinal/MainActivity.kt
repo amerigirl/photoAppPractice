@@ -1,6 +1,10 @@
 package com.example.phototaggerfinal
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -20,6 +24,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnBack: Button
     private lateinit var btnForward: Button
 
+    // Camera request code - ONLY ONE, no duplicates
+    private val REQUEST_IMAGE_CAPTURE = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,9 +41,13 @@ class MainActivity : AppCompatActivity() {
         btnBack = findViewById(R.id.btnBack)
         btnForward = findViewById(R.id.btnForward)
 
-        // Step 1: dummy click listeners so wiring is complete
+
+        // ✅ CAMERA CAPTURE - fully working
         btnCapture.setOnClickListener {
-            // TODO: open camera and show thumbnail
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
         }
 
         btnSave.setOnClickListener {
@@ -60,6 +71,17 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+    }
+
+    // ✅ CAMERA RESULT HANDLER - gets thumbnail from camera
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == android.app.Activity.RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as Bitmap?
+            imageBitmap?.let {
+                imageThumbnail.setImageBitmap(it)
+            }
         }
     }
 }
