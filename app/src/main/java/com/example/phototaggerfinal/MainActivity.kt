@@ -26,13 +26,14 @@ class MainActivity : AppCompatActivity() {
 
     // Camera request code - ONLY ONE, no duplicates
     private val REQUEST_IMAGE_CAPTURE = 1
+    private val CAMERA_PERMISSION_CODE = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        // Step 1: find views by ID (must match activity_main.xml)
+        // Step 1: find views by ID
         imageThumbnail = findViewById(R.id.imageThumbnail)
         editTag = findViewById(R.id.editTag)
         btnCapture = findViewById(R.id.btnCapture)
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ CAMERA RESULT HANDLER - gets thumbnail from camera
+    //  gets thumbnail from camera
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == android.app.Activity.RESULT_OK) {
